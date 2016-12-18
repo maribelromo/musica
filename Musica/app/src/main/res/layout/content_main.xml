@@ -20,9 +20,18 @@
         android:layout_height="wrap_content"
         android:inputType="text"
         android:imeOptions="actionDone"
+        android:visibility="gone"
         android:hint="Type search term..."/>
 
+    <TextView
+        android:layout_marginTop="20dp"
+        android:id="@+id/result_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></TextView>
+
     <LinearLayout
+        android:id="@+id/song_container"
+        android:visibility="gone"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_marginTop="20dp"
@@ -38,8 +47,10 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/artist_container"
         android:orientation="horizontal"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="wrap_content">
         <TextView
             android:layout_marginTop="5dp"
@@ -54,8 +65,9 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/add_track"
-        android:text="Add Track"
+        android:id="@+id/yes_button"
+        android:text="Yes"
+        android:visibility="gone"
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
