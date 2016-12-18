@@ -1,4 +1,4 @@
-package goosebay.com.musica;
+package com.goosebay.musica;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
