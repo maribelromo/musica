@@ -1,75 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.goosebay.musica.MainActivity"
     tools:showIn="@layout/activity_main">
 
     <EditText
-        android:id="@+id/search"
+        android:id="@+id/searchTerm"
         android:layout_width="match_parent"
+        android:layout_marginBottom="20dp"
         android:layout_marginTop="20dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_height="wrap_content"
         android:inputType="text"
         android:imeOptions="actionDone"
-        android:visibility="gone"
         android:hint="Type search term..."/>
 
-    <TextView
-        android:layout_marginTop="20dp"
-        android:id="@+id/result_msg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"></TextView>
-
-    <LinearLayout
-        android:id="@+id/song_container"
-        android:visibility="gone"
-        android:orientation="horizontal"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="20dp"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Song Name: " />
-        <TextView
-            android:id="@+id/song_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+        android:layout_height="match_parent">
+        <ListView
+            android:id="@+id/tracksList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
-    <LinearLayout
-        android:id="@+id/artist_container"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:visibility="gone"
-        android:layout_height="wrap_content">
         <TextView
-            android:layout_marginTop="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Artist: " />
-        <TextView
-            android:id="@+id/artist"
-            android:layout_marginTop="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+            android:id="@+id/noContentView"
+            android:text="No tracks found."
+            android:layout_marginTop="40dp"
+            android:visibility="gone"
+            android:gravity="top|center_horizontal"
+            android:textColor="@color/textColorHint"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
 
-    <Button
-        android:id="@+id/yes_button"
-        android:text="Yes"
-        android:visibility="gone"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"/>
 </LinearLayout>
