@@ -148,8 +148,6 @@ public class MainActivity extends AppCompatActivity {
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE_LOGIN, request);
-
-        AuthenticationClient
     }
 
     private void search(final String searchTerm){
