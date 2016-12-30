@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView mNoContentView;
     private EditText mSearchEditText;
 
+    private boolean mItemLongPressed;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
