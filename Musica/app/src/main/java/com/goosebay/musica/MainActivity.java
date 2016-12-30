@@ -31,18 +31,12 @@ public class MainActivity extends AppCompatActivity {
     // Request codes to launch activities
     private static final int REQUEST_CODE_LOGIN = 1;
 
-    // API member variables
-    private static final String CLIENT_ID = "e6b371e3392c4e8ab74e6c45d4473a40";
-    private static final String REDIRECT_URI = "goosebay-musica://oauth";
-
     private TracksAdapter mTracksAdapter;
 
     // UI member variables
     private ListView mTrackList;
     private TextView mNoContentView;
     private EditText mSearchEditText;
-
-    private boolean mItemLongPressed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,14 +51,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    protected void onDestroy() {
+        // Clean up player resources
+        SpotifyPlayerManager.getInstance().cleanUp();
+
+        super.onDestroy();
+    }
+
     private void initialize(String token){
-        SpotifyManager.getInstance().init(token);
+        SpotifyDataManager.getInstance().init(token);
+        SpotifyPlayerManager.getInstance().init(token,this);
 
         // Initialize UI
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         mSearchEditText = (EditText)findViewById(R.id.searchTerm);
         mSearchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -140,18 +141,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void authenticateUser(){
-        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
+        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(SpotifyDataManager.CLIENT_ID,
                 TOKEN,
-                REDIRECT_URI);
+                SpotifyDataManager.REDIRECT_URI);
         builder.setScopes(new String[]{"user-read-private", "user-library-modify"});
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE_LOGIN, request);
+
+        AuthenticationClient
     }
 
     private void search(final String searchTerm){
 
-        SpotifyManager.getInstance().search(searchTerm, new SpotifyManager.CompleteListener<List<Track>>() {
+        SpotifyDataManager.getInstance().search(searchTerm, new SpotifyDataManager.CompleteListener<List<Track>>() {
             public void onComplete(List<Track> tracks){
 
                 mTracksAdapter.clear();

@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:inputType="text"
         android:imeOptions="actionDone"
+        android:maxLines= "1"
         android:hint="Search for a song..."/>
 
     <RelativeLayout

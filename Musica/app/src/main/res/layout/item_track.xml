@@ -40,6 +40,7 @@
                 android:text="Artist Name" />
         </LinearLayout>
     </LinearLayout>
+
     <ImageButton
         android:id="@+id/addButton"
         android:layout_width="30dp"
@@ -48,4 +49,5 @@
         android:scaleType="fitXY"
         android:background="@android:color/transparent"
         android:src="@drawable/ic_add_white_36dp"/>
+
 </LinearLayout>

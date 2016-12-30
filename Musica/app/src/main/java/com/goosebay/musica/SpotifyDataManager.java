@@ -13,25 +13,29 @@ import retrofit.client.Response;
 /**
  * Created by maribel on 2016-12-29.
  */
-public class SpotifyManager {
+public class SpotifyDataManager {
+
+    // API member variables
+    public static final String REDIRECT_URI = "goosebay-musica://oauth";
+    public static final String CLIENT_ID = "e6b371e3392c4e8ab74e6c45d4473a40";
 
     private SpotifyApi mApi = null;
     private SpotifyService mSpotify = null;
-    private static SpotifyManager mInstance = null;
+    private static SpotifyDataManager mInstance = null;
 
     public interface CompleteListener<T> {
         void onComplete(T item);
         void onError(Throwable error);
     }
 
-    public static SpotifyManager getInstance() {
+    public static SpotifyDataManager getInstance() {
         if (mInstance == null){
-            mInstance = new SpotifyManager();
+            mInstance = new SpotifyDataManager();
         }
         return mInstance;
     }
 
-    private SpotifyManager() {}
+    private SpotifyDataManager() {}
 
     public void init (String token){
         mApi = new SpotifyApi();

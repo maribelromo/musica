@@ -1,7 +1,9 @@
 package com.goosebay.musica;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.content.Context;
-import android.util.Log;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,6 +34,8 @@ import static android.view.MotionEvent.ACTION_CANCEL;
 public class TracksAdapter extends ArrayAdapter<Track> {
     // True if we are currently handling a long press
     private boolean mItemLongPressed;
+
+    private ObjectAnimator mPulseAnimator;
 
     public TracksAdapter(Context context, ArrayList<Track> tracks) {
         super(context, 0, tracks);
@@ -96,8 +100,16 @@ public class TracksAdapter extends ArrayAdapter<Track> {
             @Override
             public boolean onLongClick(View view) {
                 int position = (Integer)view.getTag();
-                Toast.makeText(getContext(), "Item long pressed " + position, Toast.LENGTH_SHORT).show();
                 mItemLongPressed = true;
+
+                // Play the track
+                SpotifyPlayerManager.getInstance().playTrack(getItem(position));
+
+                view.setBackgroundColor(ContextCompat.getColor(getContext(),
+                        R.color.listHighlightColor));
+
+                // Show the playing indicator in the item
+                showPlayingIndicator(view);
                 return true;
             }
         });
@@ -108,14 +120,18 @@ public class TracksAdapter extends ArrayAdapter<Track> {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 int position = (Integer)view.getTag();
                 // We're only interested in when the button is released.
-                Log.e(TracksAdapter.class.getSimpleName(),"Action " + motionEvent.getAction() );
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP
                         || motionEvent.getAction() == ACTION_CANCEL) {
                     // We're only interested in anything if our speak button is currently pressed.
                     if (mItemLongPressed) {
                         // Do something when the button is released.
                         mItemLongPressed = false;
-                        Toast.makeText(getContext(), "Item released " + position, Toast.LENGTH_SHORT).show();
+
+                        view.setBackgroundColor(ContextCompat.getColor(getContext(),
+                                R.color.appBackground));
+
+                        hidePlayingIndicator(view);
+                        SpotifyPlayerManager.getInstance().stopPlayback();
                     }
                 }
 
@@ -134,8 +150,8 @@ public class TracksAdapter extends ArrayAdapter<Track> {
                 int position = (Integer)view.getTag();
 
                 // Add this track to the user's saved tracks
-                SpotifyManager.getInstance().addToSavedTracks(getItem(position),
-                        new SpotifyManager.CompleteListener<Object>() {
+                SpotifyDataManager.getInstance().addToSavedTracks(getItem(position),
+                        new SpotifyDataManager.CompleteListener<Object>() {
                             public void onComplete(Object o){
                                 Toast.makeText(getContext(),"Track was added.",Toast.LENGTH_SHORT)
                                         .show();
@@ -148,5 +164,36 @@ public class TracksAdapter extends ArrayAdapter<Track> {
             }
         });
 
+    }
+
+    private void showPlayingIndicator(View view) {
+        ImageButton addButton = (ImageButton) view.findViewById(R.id.addButton);
+
+        // Show the playing icon
+        addButton.setImageResource(R.drawable.ic_volume_up_white_36dp);
+
+        // Animate the playing icon with a pulse animation
+        if (mPulseAnimator == null) {
+            mPulseAnimator = ObjectAnimator.ofPropertyValuesHolder(addButton,
+                    PropertyValuesHolder.ofFloat("scaleX", 1.2f),
+                    PropertyValuesHolder.ofFloat("scaleY", 1.2f));
+            mPulseAnimator.setDuration(400);
+
+            mPulseAnimator.setRepeatCount(ObjectAnimator.INFINITE);
+            mPulseAnimator.setRepeatMode(ObjectAnimator.REVERSE);
+        } else {
+            mPulseAnimator.setTarget(addButton);
+        }
+
+        mPulseAnimator.start();
+    }
+
+    private void hidePlayingIndicator(View view) {
+        // Cancel pulse animation
+        mPulseAnimator.cancel();
+
+        // Set the image of the button back to the add icon
+        ImageButton addButton = (ImageButton) view.findViewById(R.id.addButton);
+        addButton.setImageResource(R.drawable.ic_add_white_36dp);
     }
 }
