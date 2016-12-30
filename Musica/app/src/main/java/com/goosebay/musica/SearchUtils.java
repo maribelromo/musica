@@ -12,6 +12,9 @@ public class SearchUtils {
     // TODO: smarter removal using regex, using hardcoded strings for now
     public static String getSearchTermFromSubject(String intentSubject){
 
+        if (intentSubject == null)
+            return "";
+
         intentSubject = intentSubject.toLowerCase();
         intentSubject = intentSubject.replace("\"","");
         intentSubject = intentSubject.replace("watch ","");

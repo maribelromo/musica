@@ -33,6 +33,9 @@ public class SpotifyPlayerManager {
     }
 
     public void init (String token, Context context){
+        if (token == null || context == null)
+            return;
+
         if (mPlayer == null) {
             Config playerConfig = new Config(context.getApplicationContext(), token, CLIENT_ID);
 
@@ -54,12 +57,16 @@ public class SpotifyPlayerManager {
 
     public void cleanUp() {
         Spotify.destroyPlayer(this);
+        mPlayer = null;
     }
 
     private SpotifyPlayerManager() {
     }
 
     public void playTrack(Track track){
+        if (mPlayer == null || track == null)
+            return;
+
         mPlayer.playUri(new Player.OperationCallback() {
             @Override
             public void onSuccess() {
@@ -73,6 +80,9 @@ public class SpotifyPlayerManager {
     }
 
     public void stopPlayback(){
+        if (mPlayer == null)
+            return;
+
         mPlayer.pause(new Player.OperationCallback() {
             @Override
             public void onSuccess() {

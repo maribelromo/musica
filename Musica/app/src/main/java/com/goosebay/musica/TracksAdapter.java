@@ -35,6 +35,7 @@ public class TracksAdapter extends ArrayAdapter<Track> {
     // True if we are currently handling a long press
     private boolean mItemLongPressed;
 
+    // Pulse animation object
     private ObjectAnimator mPulseAnimator;
 
     public TracksAdapter(Context context, ArrayList<Track> tracks) {

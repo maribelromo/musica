@@ -38,6 +38,9 @@ public class SpotifyDataManager {
     private SpotifyDataManager() {}
 
     public void init (String token){
+        if (token == null)
+            return;
+
         mApi = new SpotifyApi();
         mApi.setAccessToken(token);
         mSpotify = mApi.getService();
