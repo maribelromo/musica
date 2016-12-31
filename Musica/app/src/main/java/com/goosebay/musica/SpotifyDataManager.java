@@ -85,4 +85,24 @@ public class SpotifyDataManager {
             }
         });
     }
+
+    public void removeFromSavedTracks(Track track, final CompleteListener<Object> listener){
+        if (mSpotify == null || track == null){
+            return;
+        }
+
+        mSpotify.removeFromMySavedTracks(track.id,new Callback<Object>() {
+            @Override
+            public void success(Object object, Response response) {
+                if (listener != null)
+                    listener.onComplete(true);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (listener != null)
+                    listener.onError(error);
+            }
+        });
+    }
 }

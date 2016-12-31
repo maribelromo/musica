@@ -1,7 +1,6 @@
 package com.goosebay.musica;
 
 import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -18,6 +17,7 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.AlbumSimple;
@@ -37,6 +37,8 @@ public class TracksAdapter extends ArrayAdapter<Track> {
 
     // Pulse animation object
     private ObjectAnimator mPulseAnimator;
+
+    private HashMap<String,Boolean> mAddedTracksHashMap = new HashMap<String,Boolean>();;
 
     public TracksAdapter(Context context, ArrayList<Track> tracks) {
         super(context, 0, tracks);
@@ -147,25 +149,59 @@ public class TracksAdapter extends ArrayAdapter<Track> {
         // Add click listener for the add button
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
+                // Get the track for this row
                 int position = (Integer)view.getTag();
+                final Track track = getItem(position);
 
-                // Add this track to the user's saved tracks
-                SpotifyDataManager.getInstance().addToSavedTracks(getItem(position),
-                        new SpotifyDataManager.CompleteListener<Object>() {
-                            public void onComplete(Object o){
-                                Toast.makeText(getContext(),"Track was added.",Toast.LENGTH_SHORT)
-                                        .show();
-                            }
-                            public void onError(Throwable error){
-                                Toast.makeText(getContext(),"Unable to add track.",Toast.LENGTH_SHORT)
-                                        .show();
-                            }
-                        });
+                // If the track has already been added, remove it
+                if (mAddedTracksHashMap.containsKey(track.id)){
+                    // Remove this track from the user's saved tracks
+
+                    SpotifyDataManager.getInstance().removeFromSavedTracks(track,
+                            new SpotifyDataManager.CompleteListener<Object>() {
+                                public void onComplete(Object o) {
+                                    mAddedTracksHashMap.remove(track.id);
+
+                                    AnimationUtils.rotate45Degrees(view);
+
+                                    Toast.makeText(getContext(), "Track was removed.",
+                                            Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+
+                                public void onError(Throwable error) {
+                                    Toast.makeText(getContext(), "Unable to remove track.",
+                                            Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+                            });
+                } else {
+                    // Add this track to the user's saved tracks
+                    SpotifyDataManager.getInstance().addToSavedTracks(track,
+                            new SpotifyDataManager.CompleteListener<Object>() {
+                                public void onComplete(Object o) {
+                                    mAddedTracksHashMap.put(track.id, true);
+
+                                    AnimationUtils.rotate45Degrees(view);
+
+                                    Toast.makeText(getContext(), "Track was added.",
+                                            Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+
+                                public void onError(Throwable error) {
+                                    Toast.makeText(getContext(), "Unable to add track.",
+                                            Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+                            });
+                }
             }
         });
-
     }
+
+
 
     private void showPlayingIndicator(View view) {
         ImageButton addButton = (ImageButton) view.findViewById(R.id.addButton);
@@ -173,19 +209,7 @@ public class TracksAdapter extends ArrayAdapter<Track> {
         // Show the playing icon
         addButton.setImageResource(R.drawable.ic_volume_up_white_36dp);
 
-        // Animate the playing icon with a pulse animation
-        if (mPulseAnimator == null) {
-            mPulseAnimator = ObjectAnimator.ofPropertyValuesHolder(addButton,
-                    PropertyValuesHolder.ofFloat("scaleX", 1.2f),
-                    PropertyValuesHolder.ofFloat("scaleY", 1.2f));
-            mPulseAnimator.setDuration(400);
-
-            mPulseAnimator.setRepeatCount(ObjectAnimator.INFINITE);
-            mPulseAnimator.setRepeatMode(ObjectAnimator.REVERSE);
-        } else {
-            mPulseAnimator.setTarget(addButton);
-        }
-
+        mPulseAnimator = AnimationUtils.getPulseAnimation(addButton);
         mPulseAnimator.start();
     }
 
