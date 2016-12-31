@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -41,7 +42,13 @@ public class LoginActivity extends AppCompatActivity {
         // If the user is authenticated take them to search, otherwise as them to log in.
         String token = SharedPreferencesManager.getToken(this);
         if (token == null) {
-            setContentView(R.layout.activity_login);
+            // If this is the first time the user logs in show them the login screen.
+            if (SharedPreferencesManager.isFirstLogin(this)) {
+                setContentView(R.layout.activity_login);
+            } else {
+                // Otherwise try to log them in automatically.
+                authenticateUser();
+            }
         } else {
             launchSearchActivity(token);
         }
@@ -56,7 +63,10 @@ public class LoginActivity extends AppCompatActivity {
 
             switch (response.getType()) {
                 case TOKEN:
-                    Log.d(TAG, "Log in successful: " + response.getError());
+                    Log.d(TAG, "Log in was successful");
+
+                    // Store the the user has successfully logged in.
+                    SharedPreferencesManager.setFirstLogin(this, false);
 
                     String accessToken = response.getAccessToken();
                     int expirationLength = response.getExpiresIn();
@@ -64,15 +74,17 @@ public class LoginActivity extends AppCompatActivity {
                     // Store the access token for future app launches
                     SharedPreferencesManager.setAccessToken(this, accessToken , expirationLength);
 
-                    // Initialize
+                    // Launch the search activity
                     launchSearchActivity(accessToken);
+                    break;
 
                 case ERROR:
-                    Log.e(TAG, "Log in error: " + response.getError());
-                    break;
+                    Log.e(TAG,"Log in error: " + response.getError());
                 default:
-                    Log.e(TAG, "Log in unknown error: " + response.getType());
-                    break;
+                    Log.e(TAG,"Error in response: " + response.getType());
+
+                    setContentView(R.layout.activity_login);
+                    Toast.makeText(this, "An error occurred, please try again.", Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -15,6 +15,8 @@ public class SharedPreferencesManager {
     private static final String ACCESS_TOKEN = "access_token";
     private static final String EXPIRATION_DATE = "expiration_date";
 
+    private static final String FIRST_LOGIN = "first_login";
+
     private static SharedPreferences getSharedPreferences(Context appContext) {
         return appContext.getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE);
     }
@@ -59,5 +61,28 @@ public class SharedPreferencesManager {
         }
 
         return token;
+    }
+
+    /**
+     * Set to false if the user has previously logged.
+     */
+    public static void setFirstLogin(Context context, boolean firstLogin) {
+        Context appContext = context.getApplicationContext();
+
+        SharedPreferences sharedPref = getSharedPreferences(appContext);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putBoolean(FIRST_LOGIN, firstLogin);
+        editor.apply();
+    }
+
+    /**
+     * Returns true if the user has not logged in before.
+     */
+    public static boolean isFirstLogin(Context context) {
+        Context appContext = context.getApplicationContext();
+        SharedPreferences sharedPref = getSharedPreferences(appContext);
+
+        return sharedPref.getBoolean(FIRST_LOGIN, true);
     }
 }
