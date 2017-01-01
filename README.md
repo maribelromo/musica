@@ -1,6 +1,6 @@
 # Musica
 
-Musica is an Android app that helps add songs from other apps to your Spotify music collection. 
+Musica is an Android app that helps you add songs from other apps to your Spotify music collection. 
 
 It currently supports adding songs from the YouTube Android app. If you are watching a video and are feeling the song, do a "Share..." to Musica to add the song to your Spotify collection!
 
