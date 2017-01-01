@@ -2,9 +2,8 @@
     <string name="app_name">Musica</string>
     <string name="login">Login</string>
 
-
     <string name="login_welcome">Welcome to Musica!</string>
-    <string name="login_app_explanation">Add songs to your Spotify music that you find in other apps. \n\n If you are in the YouTube app and hear a song you like, do a \"Share...\"  to Musica and we will find it on Spotify and add it to your music!</string>
+    <string name="login_app_explanation">Add songs from other apps to your Spotify music collection. \n\n  It currently supports adding songs from the YouTube Android app. If you are watching a video and are feeling the song, do a \"Share...\"  to Musica to add the song to your Spotify collection!</string>
 
     <string name="error_msg_no_tracks_found">Sorry, we were not able to find \'%s\' on Spotify :(</string>
     <string name="success_msg_tracks_found">Yay! We found this track on Spotify, add it to your music list?</string>
