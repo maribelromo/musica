@@ -11,8 +11,8 @@ import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
-import static com.goosebay.musica.SpotifyDataManager.CLIENT_ID;
-import static com.goosebay.musica.SpotifyDataManager.REDIRECT_URI;
+import static com.goosebay.musica.SpotifyApiManager.CLIENT_ID;
+import static com.goosebay.musica.SpotifyApiManager.REDIRECT_URI;
 import static com.spotify.sdk.android.authentication.AuthenticationResponse.Type.TOKEN;
 
 public class LoginActivity extends AppCompatActivity {
@@ -22,23 +22,20 @@ public class LoginActivity extends AppCompatActivity {
     // Request codes to launch activities
     private static final int REQUEST_CODE_LOGIN = 1;
 
-    private Intent mLastIntent;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        initialize(getIntent());
+        initialize();
     }
 
     @Override
     public void onNewIntent (Intent intent){
-        initialize(intent);
+        // Update the intent
+        setIntent(intent);
     }
 
-    private void initialize(Intent intent){
-        mLastIntent = intent;
-
+    private void initialize(){
         // If the user is authenticated take them to search, otherwise as them to log in.
         String token = SharedPreferencesManager.getToken(this);
         if (token == null) {
@@ -80,11 +77,10 @@ public class LoginActivity extends AppCompatActivity {
 
                 case ERROR:
                     Log.e(TAG,"Log in error: " + response.getError());
-                default:
-                    Log.e(TAG,"Error in response: " + response.getType());
-
                     setContentView(R.layout.activity_login);
                     Toast.makeText(this, "An error occurred, please try again.", Toast.LENGTH_SHORT).show();
+                default:
+                    Log.e(TAG,"Response type: " + response.getType());
             }
         }
     }
@@ -100,13 +96,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void launchSearchActivity(String token) {
+        Intent intent = getIntent();
+
+        String action = intent.getAction();
+        String type = intent.getType();
+
         String searchTerm = null;
-
-        String action = mLastIntent.getAction();
-        String type = mLastIntent.getType();
-
         if (Intent.ACTION_SEND.equals(action) && type != null) {
-            Bundle extras = mLastIntent.getExtras();
+            Bundle extras = intent.getExtras();
 
             if (extras == null)
                 return;
@@ -124,7 +121,6 @@ public class LoginActivity extends AppCompatActivity {
             newIntent.putExtra(SearchActivity.INTENT_SEARCH_TERM, searchTerm);
         }
 
-        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(newIntent);
         finish();
     }

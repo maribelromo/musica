@@ -27,6 +27,7 @@ public class SearchActivity extends AppCompatActivity {
     static final String INTENT_SEARCH_TERM = "INTENT_SEARCH_TERM";
 
     private TracksAdapter mTracksAdapter;
+    private SpotifyTrackPlayer mPlayer;
 
     // UI member variables
     private ListView mTrackList;
@@ -41,12 +42,17 @@ public class SearchActivity extends AppCompatActivity {
 
         String token = intent.getStringExtra(INTENT_EXTRA_TOKEN);
 
-        SpotifyDataManager.getInstance().init(token);
-        SpotifyPlayerManager.getInstance().init(token,this);
+        mPlayer = new SpotifyTrackPlayer(token, this);
+        SpotifyApiManager.getInstance().init(token);
 
         initializeUI();
 
         initiateSearch(intent);
+    }
+
+    public void onDestroy(){
+        mPlayer.cleanUp();
+        super.onDestroy();
     }
 
     public void onNewIntent (Intent intent){
@@ -63,13 +69,6 @@ public class SearchActivity extends AppCompatActivity {
 
             search(searchTerm);
         }
-    }
-
-    protected void onDestroy() {
-        // Clean up player resources
-        SpotifyPlayerManager.getInstance().cleanUp();
-
-        super.onDestroy();
     }
 
     private void initializeUI(){
@@ -129,13 +128,13 @@ public class SearchActivity extends AppCompatActivity {
 
         mNoContentView = (TextView) findViewById(R.id.noContentView);
 
-        mTracksAdapter = new TracksAdapter(this, new ArrayList<Track>());
+        mTracksAdapter = new TracksAdapter(this, new ArrayList<Track>(), mPlayer);
         mTrackList = (ListView) findViewById(R.id.tracksList);
         mTrackList.setAdapter(mTracksAdapter);
     }
 
     private void search(final String searchTerm){
-        SpotifyDataManager.getInstance().search(searchTerm, new SpotifyDataManager.CompleteListener<List<Track>>() {
+        SpotifyApiManager.getInstance().search(searchTerm, new SpotifyApiManager.CompleteListener<List<Track>>() {
             public void onComplete(List<Track> tracks){
 
                 mTracksAdapter.clear();

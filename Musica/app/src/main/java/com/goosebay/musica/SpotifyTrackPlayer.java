@@ -11,56 +11,43 @@ import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import kaaes.spotify.webapi.android.models.Track;
 
-import static com.goosebay.musica.SpotifyDataManager.CLIENT_ID;
+import static com.goosebay.musica.SpotifyApiManager.CLIENT_ID;
 
 
 /**
  * Created by maribel on 2016-12-30.
  */
-public class SpotifyPlayerManager {
+public class SpotifyTrackPlayer {
 
-    private static String TAG_NAME = SpotifyDataManager.class.getSimpleName();
-
-    private static SpotifyPlayerManager mInstance;
+    private static String TAG_NAME = SpotifyApiManager.class.getSimpleName();
 
     private SpotifyPlayer mPlayer = null;
+    private Context mContext = null;
 
-    public static SpotifyPlayerManager getInstance() {
-        if (mInstance == null){
-            mInstance = new SpotifyPlayerManager();
-        }
-        return mInstance;
-    }
-
-    public void init (String token, Context context){
+    public SpotifyTrackPlayer(String token, Context context) {
         if (token == null || context == null)
             return;
 
-        if (mPlayer == null) {
-            Config playerConfig = new Config(context.getApplicationContext(), token, CLIENT_ID);
+        mContext = context;
 
-            mPlayer = Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
-                @Override
-                public void onInitialized(SpotifyPlayer player) {
-                    Log.d(TAG_NAME, "Player was initialized.");
-                }
+        Config playerConfig = new Config(mContext.getApplicationContext(), token, CLIENT_ID);
 
-                @Override
-                public void onError(Throwable error) {
-                    Log.d(TAG_NAME, "Player was not initialized. " + error);
-                }
-            });
-        } else {
-            mPlayer.login(token);
-        }
+        mPlayer = Spotify.getPlayer(playerConfig, mContext, new com.spotify.sdk.android.player.SpotifyPlayer.InitializationObserver() {
+            @Override
+            public void onInitialized(com.spotify.sdk.android.player.SpotifyPlayer player) {
+                Log.d(TAG_NAME, "Player was initialized.");
+            }
+
+            @Override
+            public void onError(Throwable error) {
+                Log.d(TAG_NAME, "Player was not initialized. " + error);
+            }
+        });
     }
 
     public void cleanUp() {
-        Spotify.destroyPlayer(this);
+        Spotify.destroyPlayer(mContext);
         mPlayer = null;
-    }
-
-    private SpotifyPlayerManager() {
     }
 
     public void playTrack(Track track){

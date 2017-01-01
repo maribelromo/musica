@@ -9,13 +9,15 @@ import java.util.concurrent.TimeUnit;
  * Created by maribel on 2016-12-29.
  */
 
-public class SharedPreferencesManager {
+public final class SharedPreferencesManager {
     private static final String PREFS_FILE_NAME = SharedPreferencesManager.class.getName();
 
     private static final String ACCESS_TOKEN = "access_token";
     private static final String EXPIRATION_DATE = "expiration_date";
 
     private static final String FIRST_LOGIN = "first_login";
+
+    private SharedPreferencesManager(){}
 
     private static SharedPreferences getSharedPreferences(Context appContext) {
         return appContext.getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE);

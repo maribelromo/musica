@@ -38,10 +38,13 @@ public class TracksAdapter extends ArrayAdapter<Track> {
     // Pulse animation object
     private ObjectAnimator mPulseAnimator;
 
-    private HashMap<String,Boolean> mAddedTracksHashMap = new HashMap<String,Boolean>();;
+    private HashMap<String,Boolean> mAddedTracksHashMap = new HashMap<String,Boolean>();
 
-    public TracksAdapter(Context context, ArrayList<Track> tracks) {
+    private SpotifyTrackPlayer mPlayer;
+
+    public TracksAdapter(Context context, ArrayList<Track> tracks, SpotifyTrackPlayer player) {
         super(context, 0, tracks);
+        this.mPlayer = player;
     }
 
     @Override
@@ -106,7 +109,7 @@ public class TracksAdapter extends ArrayAdapter<Track> {
                 mItemLongPressed = true;
 
                 // Play the track
-                SpotifyPlayerManager.getInstance().playTrack(getItem(position));
+                mPlayer.playTrack(getItem(position));
 
                 view.setBackgroundColor(ContextCompat.getColor(getContext(),
                         R.color.listHighlightColor));
@@ -134,7 +137,7 @@ public class TracksAdapter extends ArrayAdapter<Track> {
                                 R.color.appBackground));
 
                         hidePlayingIndicator(view);
-                        SpotifyPlayerManager.getInstance().stopPlayback();
+                        mPlayer.stopPlayback();
                     }
                 }
 
@@ -158,8 +161,8 @@ public class TracksAdapter extends ArrayAdapter<Track> {
                 if (mAddedTracksHashMap.containsKey(track.id)){
                     // Remove this track from the user's saved tracks
 
-                    SpotifyDataManager.getInstance().removeFromSavedTracks(track,
-                            new SpotifyDataManager.CompleteListener<Object>() {
+                    SpotifyApiManager.getInstance().removeFromSavedTracks(track,
+                            new SpotifyApiManager.CompleteListener<Object>() {
                                 public void onComplete(Object o) {
                                     mAddedTracksHashMap.remove(track.id);
 
@@ -178,8 +181,8 @@ public class TracksAdapter extends ArrayAdapter<Track> {
                             });
                 } else {
                     // Add this track to the user's saved tracks
-                    SpotifyDataManager.getInstance().addToSavedTracks(track,
-                            new SpotifyDataManager.CompleteListener<Object>() {
+                    SpotifyApiManager.getInstance().addToSavedTracks(track,
+                            new SpotifyApiManager.CompleteListener<Object>() {
                                 public void onComplete(Object o) {
                                     mAddedTracksHashMap.put(track.id, true);
 
