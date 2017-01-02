@@ -6,7 +6,9 @@ import java.util.regex.Pattern;
 /**
  * Created by maribel on 2016-12-29.
  */
-public class SearchUtils {
+public final class SearchUtils {
+
+    private SearchUtils(){}
 
     // Subject Example: "Watch "JoJo Siwa - BOOMERANG (Official Video)" on YouTube"
     // TODO: smarter removal using regex, using hardcoded strings for now

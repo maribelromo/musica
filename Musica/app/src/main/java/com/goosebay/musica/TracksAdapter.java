@@ -38,6 +38,7 @@ public class TracksAdapter extends ArrayAdapter<Track> {
     // Pulse animation object
     private ObjectAnimator mPulseAnimator;
 
+    // Tracks that have been added in this session
     private HashMap<String,Boolean> mAddedTracksHashMap = new HashMap<String,Boolean>();
 
     private SpotifyTrackPlayer mPlayer;
@@ -166,7 +167,7 @@ public class TracksAdapter extends ArrayAdapter<Track> {
                                 public void onComplete(Object o) {
                                     mAddedTracksHashMap.remove(track.id);
 
-                                    AnimationUtils.rotate45Degrees(view);
+                                    AnimationUtils.rotate(view, 0f);
 
                                     Toast.makeText(getContext(), "Track was removed.",
                                             Toast.LENGTH_SHORT)
@@ -186,7 +187,7 @@ public class TracksAdapter extends ArrayAdapter<Track> {
                                 public void onComplete(Object o) {
                                     mAddedTracksHashMap.put(track.id, true);
 
-                                    AnimationUtils.rotate45Degrees(view);
+                                    AnimationUtils.rotate(view, 45f);
 
                                     Toast.makeText(getContext(), "Track was added.",
                                             Toast.LENGTH_SHORT)
@@ -204,15 +205,17 @@ public class TracksAdapter extends ArrayAdapter<Track> {
         });
     }
 
-
-
     private void showPlayingIndicator(View view) {
+        // Hide the add button
         ImageButton addButton = (ImageButton) view.findViewById(R.id.addButton);
+        addButton.setVisibility(View.GONE);
 
-        // Show the playing icon
-        addButton.setImageResource(R.drawable.ic_volume_up_white_36dp);
+        // Show playing indicator
+        ImageView speakerIndicator = (ImageView) view.findViewById(R.id.speakerIndicator);
+        speakerIndicator.setVisibility(View.VISIBLE);
 
-        mPulseAnimator = AnimationUtils.getPulseAnimation(addButton);
+        // Start animation
+        mPulseAnimator = AnimationUtils.startPulseAnimation(speakerIndicator);
         mPulseAnimator.start();
     }
 
@@ -220,8 +223,12 @@ public class TracksAdapter extends ArrayAdapter<Track> {
         // Cancel pulse animation
         mPulseAnimator.cancel();
 
-        // Set the image of the button back to the add icon
+        // Show the add button
         ImageButton addButton = (ImageButton) view.findViewById(R.id.addButton);
-        addButton.setImageResource(R.drawable.ic_add_white_36dp);
+        addButton.setVisibility(View.VISIBLE);
+
+        // Hide playing indicator
+        ImageView speakerIndicator = (ImageView) view.findViewById(R.id.speakerIndicator);
+        speakerIndicator.setVisibility(View.GONE);
     }
 }

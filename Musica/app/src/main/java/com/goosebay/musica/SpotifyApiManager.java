@@ -1,5 +1,6 @@
 package com.goosebay.musica;
 
+import java.util.HashMap;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
@@ -22,6 +23,9 @@ public class SpotifyApiManager {
     private SpotifyApi mApi = null;
     private SpotifyService mSpotify = null;
     private static SpotifyApiManager mInstance = null;
+
+    // Keeps track of the pending track add and remove API calls
+    private HashMap<String,Boolean> mPendingOperations = new HashMap<String,Boolean>();
 
     public interface CompleteListener<T> {
         void onComplete(T item);
@@ -66,40 +70,60 @@ public class SpotifyApiManager {
         });
     }
 
-    public void addToSavedTracks(Track track, final CompleteListener<Object> listener){
+    public void addToSavedTracks(final Track track, final CompleteListener<Object> listener){
         if (mSpotify == null || track == null){
             return;
         }
 
+        // If we are currently waiting for a pending request for this track, ignore this.
+        if (mPendingOperations.containsKey(track.id)){
+            return;
+        }
+
+        // Added it to our pending operations list
+        mPendingOperations.put(track.id, true);
+
         mSpotify.addToMySavedTracks(track.id,new Callback<Object>() {
             @Override
             public void success(Object object, Response response) {
+                mPendingOperations.remove(track.id);
                 if (listener != null)
                     listener.onComplete(true);
             }
 
             @Override
             public void failure(RetrofitError error) {
+                mPendingOperations.remove(track.id);
                 if (listener != null)
                     listener.onError(error);
             }
         });
     }
 
-    public void removeFromSavedTracks(Track track, final CompleteListener<Object> listener){
+    public void removeFromSavedTracks(final Track track, final CompleteListener<Object> listener){
         if (mSpotify == null || track == null){
             return;
         }
 
+        // If we are currently waiting for a pending request for this track, ignore this.
+        if (mPendingOperations.containsKey(track.id)){
+            return;
+        }
+
+        // Added it to our pending operations list
+        mPendingOperations.put(track.id, true);
+
         mSpotify.removeFromMySavedTracks(track.id,new Callback<Object>() {
             @Override
             public void success(Object object, Response response) {
+                mPendingOperations.remove(track.id);
                 if (listener != null)
                     listener.onComplete(true);
             }
 
             @Override
             public void failure(RetrofitError error) {
+                mPendingOperations.remove(track.id);
                 if (listener != null)
                     listener.onError(error);
             }

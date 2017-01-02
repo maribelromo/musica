@@ -10,16 +10,17 @@ import static com.goosebay.musica.R.id.addButton;
  * Created by maribel on 2016-12-30.
  */
 
-public class AnimationUtils {
-    public static void rotate45Degrees(View view) {
-        float currenRotation = view.getRotation();
+public final class AnimationUtils {
+    private AnimationUtils(){}
+
+    public static void rotate(View view, float degrees) {
         ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(view,
-                PropertyValuesHolder.ofFloat("rotation", currenRotation, currenRotation + 45f));
+                PropertyValuesHolder.ofFloat("rotation", degrees));
         animator.setDuration(400);
         animator.start();
     }
 
-    public static ObjectAnimator getPulseAnimation(View view) {
+    public static ObjectAnimator startPulseAnimation(View view) {
         // Animate the playing icon with a pulse animation
         ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(addButton,
                     PropertyValuesHolder.ofFloat("scaleX", 1.2f),

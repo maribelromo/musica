@@ -50,4 +50,14 @@
         android:background="@android:color/transparent"
         android:src="@drawable/ic_add_white_36dp"/>
 
+    <ImageView
+        android:id="@+id/speakerIndicator"
+        android:visibility="gone"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
+        android:scaleType="fitXY"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_volume_up_white_36dp"/>
+
 </LinearLayout>
